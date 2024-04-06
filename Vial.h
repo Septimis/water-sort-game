@@ -17,17 +17,22 @@ public:
 	 */ 
 	static bool pour(Vial& pouringVial, Vial& receivingVial);
 
-	const unsigned short getNumSlots() const { return numSlots; }
+	// Gets the total depth of the vial
+	const unsigned short getDepth() const { return numSlots; }
+
+	// Gets how many slots the top item takes without interuption
+	const unsigned short getItemDepth() const;
 
 	void receive(const unsigned short item);
 
 	// reports if the vial eligible for a winning level
 	const bool isComplete() const;
+	const bool isEmpty() const { return slots.empty(); };
 
 	// returns top item in the vial or 0 if empty
 	const unsigned short peek() const { return slots.empty() ? 0 : slots.top(); }
-
 	const unsigned short pop();
+
 	std::size_t getFillLevel() const { return slots.size(); }
 
 private:

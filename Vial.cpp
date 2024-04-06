@@ -22,6 +22,21 @@ bool Vial::pour(Vial& pouringVial, Vial& receivingVial)
 	return true;
 }
 
+const unsigned short Vial::getItemDepth() const
+{
+	std::stack<unsigned short> tempSlots = slots;
+	unsigned short itemDepth = 0;
+	const unsigned short topItem = tempSlots.top();
+
+	for(unsigned short i = 0; i < tempSlots.size() && topItem == tempSlots.top(); i++)
+	{
+		itemDepth++;
+		tempSlots.pop();
+	}
+
+	return itemDepth;
+}
+
 void Vial::receive(const unsigned short item)
 {
 	slots.push(item);
@@ -67,5 +82,5 @@ bool Vial::canPour(Vial pouringVial, Vial receivingVial)
 		pouringVial.peek() == receivingVial.peek()					// top two elements match
 	) &&
 	!pouringVial.isComplete() &&									// don't pour a complete vial
-	receivingVial.getFillLevel() != receivingVial.getNumSlots();	// don't pour into a full vial
+	receivingVial.getFillLevel() != receivingVial.getDepth();	// don't pour into a full vial
 }

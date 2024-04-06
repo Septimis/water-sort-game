@@ -48,6 +48,7 @@ Board::Board(char* a_filePath)
 			vials.push_back(initializeVial(line, vialIndex++));
 		}
 	}
+	levelFile.close();
 
 	std::cout << solve(vials);
 }
@@ -63,6 +64,11 @@ std::string Board::solve(std::vector<Vial> a_vials, std::string previousMove)
 
 	for(Vial& pouringVial : a_vials)
 	{
+		if(pouringVial.isEmpty())
+		{
+			continue;
+		}
+
 		for(Vial& receivingVial : a_vials)
 		{
 			// Don't pour a vial into itself
