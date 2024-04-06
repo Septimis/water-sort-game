@@ -2,9 +2,11 @@
 #include <fstream>
 #include <iostream>
 
-Vial Board::initializeVial(const std::string a_vialInput, const unsigned short vialIndex)
+#define uint8 unsigned char
+
+Vial Board::initializeVial(const std::string a_vialInput, const uint8 vialIndex)
 {
-	std::vector<unsigned short> newVialContents;
+	std::vector<uint8> newVialContents;
 	std::string currentItem;
 	for(const char c : a_vialInput)
 	{
@@ -21,7 +23,7 @@ Vial Board::initializeVial(const std::string a_vialInput, const unsigned short v
 	newVialContents.push_back(std::stoi(currentItem));
 
 	Vial newVial(newVialContents.size(), vialIndex);
-	for(unsigned short item : newVialContents)
+	for(uint8 item : newVialContents)
 	{
 		// don't place 0's in the vial since it means empty
 		if(!item)
@@ -42,7 +44,7 @@ Board::Board(char* a_filePath)
 	if(levelFile.is_open())
 	{
 		std::string line;
-		unsigned short vialIndex = 0;
+		uint8 vialIndex = 0;
 		while(std::getline(levelFile, line))
 		{
 			vials.push_back(initializeVial(line, vialIndex++));
@@ -71,12 +73,6 @@ std::string Board::solve(std::vector<Vial> a_vials, std::string previousMove)
 
 		for(Vial& receivingVial : a_vials)
 		{
-			// Don't pour a vial into itself
-			if(pouringVial.getIndex() == receivingVial.getIndex())
-			{
-				continue;
-			}
-
 			if(Vial::pour(pouringVial, receivingVial))
 			{
 				const std::string move = "Pour vial " + std::to_string(pouringVial.getIndex()) + " into vial " + std::to_string(receivingVial.getIndex()) + "\n";
@@ -105,3 +101,5 @@ const bool Board::isBoardSolved(std::vector<Vial>& a_vials) const
 
 	return true;
 }
+
+#undef uint8

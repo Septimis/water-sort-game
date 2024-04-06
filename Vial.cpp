@@ -1,6 +1,8 @@
 #include "Vial.h"
 
-Vial::Vial(unsigned short numSlots, unsigned short index)
+#define uint8 unsigned char
+
+Vial::Vial(uint8 numSlots, uint8 index)
 {
 	this->numSlots = numSlots;
 	this->index = index;
@@ -22,13 +24,13 @@ bool Vial::pour(Vial& pouringVial, Vial& receivingVial)
 	return true;
 }
 
-const unsigned short Vial::getItemDepth() const
+const uint8 Vial::getItemDepth() const
 {
-	std::stack<unsigned short> tempSlots = slots;
-	unsigned short itemDepth = 0;
-	const unsigned short topItem = tempSlots.top();
+	std::stack<uint8> tempSlots = slots;
+	uint8 itemDepth = 0;
+	const uint8 topItem = tempSlots.top();
 
-	for(unsigned short i = 0; i < tempSlots.size() && topItem == tempSlots.top(); i++)
+	for(uint8 i = 0; i < tempSlots.size() && topItem == tempSlots.top(); i++)
 	{
 		itemDepth++;
 		tempSlots.pop();
@@ -37,22 +39,22 @@ const unsigned short Vial::getItemDepth() const
 	return itemDepth;
 }
 
-void Vial::receive(const unsigned short item)
+void Vial::receive(const uint8 item)
 {
 	slots.push(item);
 }
 
-const unsigned short Vial::pop()
+const uint8 Vial::pop()
 {
-	const unsigned short nextItem = peek();
+	const uint8 nextItem = peek();
 	slots.pop();
 	return nextItem;
 }
 
 const bool Vial::isComplete() const
 {
-	std::stack<unsigned short> temp = slots;
-	const unsigned short vialValue = temp.size() ? temp.top() : 0;
+	std::stack<uint8> temp = slots;
+	const uint8 vialValue = temp.size() ? temp.top() : 0;
 
 	bool isComplete = true;
 	
@@ -76,11 +78,19 @@ const bool Vial::isComplete() const
 
 bool Vial::canPour(Vial pouringVial, Vial receivingVial)
 {
-	return pouringVial.peek() &&									// cannot pour from an empty vial
-	(
+	return
+	pouringVial.getIndex() != receivingVial.getIndex() && 		// Cannot pour a vial into itself
+	pouringVial.peek() &&										// cannot pour from an empty vial
+	(															// Elements match
 		!receivingVial.peek() ||									// receiving vial is empty OR
 		pouringVial.peek() == receivingVial.peek()					// top two elements match
 	) &&
-	!pouringVial.isComplete() &&									// don't pour a complete vial
+	!(															// Don't pour if
+		pouringVial.getItemDepth() == pouringVial.getDepth() &&		// The pouring vial has only one uniform color &
+		receivingVial.isEmpty()										// The receiving vial is empty.
+	) &&
+	!pouringVial.isComplete() &&								// don't pour a completed vial
 	receivingVial.getFillLevel() != receivingVial.getDepth();	// don't pour into a full vial
 }
+
+#undef uint8
